@@ -86,13 +86,10 @@ ReoccuringFemales
 Data.2.1 <- gather(Data.2,
                    key = "NeworExisting",
                    value = "MetalTag",
-                   FT.LFnew:FT.RRexisting)
+                   NewMetal, ExistingMetal)
 View(Data.2.1)
 #When I try to run this function. It does not work. 
 #Hey I changed the order of varibles in your function. In the order below it's asking if the Metal Tag ID is in ReoccuringFemals. If TRUE then it gets that row. Let me know if this is what you want. 
 Data.4 <- Data.2.1[Data.2.1$MetalTag %in% ReoccuringFemales,]
 # here is another way to do it too
 test.4 <- filter(Data.2.1, MetalTag %in% ReoccuringFemales)
-
-str(Data.4)
-View(test.4)
