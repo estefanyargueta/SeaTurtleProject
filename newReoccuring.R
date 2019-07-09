@@ -85,14 +85,41 @@ View(Data.4)
 
 #### Looking at the Data in Data.4 -- the measurements with no missing data are SCL.NN and CCL.NN. We will use those for statistical analysis. ####
 # Growth throughout the years looking at the two measurements
-ggplot(Data.4, aes(x = Year, y = SCL.NN, color = E.TurtleCode)) +
+theme_update(plot.title = element_text(hjust = 0.5))
+
+Growth <- ggplot(Data.4, aes(x = Year, y = SCL.NN, color = E.TurtleCode)) +
   geom_point(size = 4)
+
+Growth + labs(title="Growth in Reoccuring Females",
+              x ="Year", y = "Straight Carapace Length Notch-Notch (cm)") +
+  theme( plot.title = element_text(size=14, face="bold"),
+    axis.title.x = element_text(size=14),
+    axis.title.y = element_text(size=14))
 
 ggplot(Data.4, aes(x= Year, y= CCL.NN, color = E.TurtleCode))+
   geom_point(size=4)
 
-fit.1 <- lm(ClutchCount ~ CCL.NN, data = Data.4)
+fit.1 <- lm(ClutchCount ~ SCL.NN, data = Data.4)
 summary(fit.1)
 ggplot(Data.4, aes(x= SCL.NN, y= ClutchCount, color = E.TurtleCode))+
   geom_point(size=4) + 
   geom_smooth(method = "lm", se = FALSE)
+
+plot2 <- ggplot(Data.4, aes(x= SCL.NN, y= ClutchCount, col = Data.4$E.TurtleCode))+
+  geom_point(size=4)
+
+plot2 + geom_line(data = fortify(fit.1), aes(x = Data.4$SCL.NN, y = .fitted)) +
+   labs(title="Increasing Clutch Count with Carapace Length",
+         x ="Straight Carapace Length (cm)", y = "Clutch Count",
+        caption="R-squared = 0.41") +
+  theme( plot.title = element_text(size=14, face="bold"),
+         axis.title.x = element_text(size=14),
+         axis.title.y = element_text(size=14))+
+  theme(legend.title = element_text(size=14),
+        legend.justification=c(1,0), 
+        legend.position=c(0.95, 0.05),  
+        legend.background = element_blank(),
+        legend.key = element_blank()) +
+  guides(color=guide_legend("Turtle ID")) 
+
+####### 
