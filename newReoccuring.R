@@ -247,3 +247,67 @@ plot8 + geom_line(data = fortify(fit.8), aes(x = Data.8$SCL.NN, y = .fitted)) +
         legend.background = element_blank(),
         legend.key = element_blank()) +
   guides(color=guide_legend("Turtle ID")) 
+
+##  ----------------------------------------------------------------------------------------------------------------------  ##
+##### After meeting w/ Dr. Godfrey he suggested doing the reoccuring females that have came for atleast 2 years #####
+##  --------------------------------------------------------------------------------------------------------------------------  ##
+Data.10 <- filter(Data.2, ntimes >= 2)
+Data.10
+
+# We have 4 turtles that show up for more than 3 years
+Data.11 <- Data %>% 
+  filter(E.TurtleCode %in% c("5T", "7O", "7V", "7W", "5V", "7Z", "8M", "8P"))
+View(Data.11)
+
+##  -------------------------------------------------------------  ##
+#### NEW Yearly Reoccuring females analysiS for females that have came over 2 times ####
+##  -------------------------------------------------------------  ##
+
+#Looking at the Data in Data.11 -- the measurements with no missing data is SCL.NN except one line
+#Lets filter out that one line
+Data.11 <- Data.11 %>% 
+  filter(!is.na(SCL.NN))
+# We will use SCL.NN since we use if for most statistical analysis.
+# Growth throughout the years looking at the two measurements
+theme_update(plot.title = element_text(hjust = 0.5))
+# That just places the title of the graph in the center 
+
+
+#Lets see how the turtles grow over the years
+Growth <- ggplot(Data.11, aes(x = Year, y = SCL.NN, color = E.TurtleCode)) +
+  geom_point(size = 4) + 
+  geom_smooth(method = "lm", se = FALSE)
+
+Growth + labs(title="Growth in Reoccuring Females",
+              x ="Year", y = "Straight Carapace Length Notch-Notch (cm)") +
+  theme( plot.title = element_text(size=14, face="bold"),
+         axis.title.x = element_text(size=14),
+         axis.title.y = element_text(size=14))
+
+# Linear Regreesion between CC and SCL.NN
+fit.11 <- lm(ClutchCount ~ SCL.NN, data = Data.11)
+summary(fit.11)
+
+#Plotting that relationship
+# This plot adds linear regreession for each turtle, not the group as a whole
+ggplot(Data.11, aes(x= SCL.NN, y= ClutchCount, color = E.TurtleCode))+
+  geom_point(size=4) + 
+  geom_smooth(method = "lm", se = FALSE)
+
+# We will plot the points and add the linear regreesion model after
+plot2 <- ggplot(Data.11, aes(x= SCL.NN, y= ClutchCount, col = Data.11$E.TurtleCode))+
+  geom_point(size=4)
+#Adding the linear regression model and editing the look of the graph
+plot2 + geom_line(data = fortify(fit.11), aes(x = Data.11$SCL.NN, y = .fitted)) +
+  labs(title="Increasing Clutch Count with Carapace Length",
+       x ="Straight Carapace Length (cm)", y = "Clutch Count",
+       caption="R-squared = 0.4356") +
+  theme( plot.title = element_text(size=14, face="bold"),
+         axis.title.x = element_text(size=14),
+         axis.title.y = element_text(size=14))+
+  theme(legend.title = element_text(size=14),
+        legend.justification=c(1,0), 
+        legend.position=c(0.95, 0.05),  
+        legend.background = element_blank(),
+        legend.key = element_blank()) +
+  guides(color=guide_legend("Turtle ID")) 
